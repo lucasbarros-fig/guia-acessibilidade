@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guia de acessibilidade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: índice fixo à esquerda + coluna de leitura de até ~70 caracteres; exemplos lado a lado ("Assim não" × "Assim sim") com cores de um design system real, com simulador de visão. */
+:root{
+  --bg:#f9fafb; --surface:#ffffff; --ink:#303030; --fg:#374151; --muted:#636f79; --line:#d6dce0; --soft:#eef2f5;
+  --link:#166cba; --brand:#2b87d9; --navy:#020726; --on-navy:#ffffff; --on-navy-muted:#b9c3d6;
+  --ok:#1f7a4d; --ok-bg:#e6f2ec; --fix:#8f5f0a; --fix-bg:#fbf3e4; --no:#c0372b; --no-bg:#fbeceb;
+  --f-display:"Bricolage Grotesque","DM Sans","Helvetica Neue",Arial,sans-serif;
+  --f-body:"DM Sans","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1114; --surface:#12171b; --ink:#ffffff; --fg:#c9d1d9; --muted:#a0aab2; --line:#2e353a; --soft:#1a2126;
+  --link:#5ea6ee; --brand:#2b87d9; --navy:#020726; --on-navy:#ffffff; --on-navy-muted:#b9c3d6;
+  --ok:#6fd69a; --ok-bg:#10291b; --fix:#f2c46b; --fix-bg:#33270c; --no:#ff9b8f; --no-bg:#3a1714; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1114; --surface:#12171b; --ink:#ffffff; --fg:#c9d1d9; --muted:#a0aab2; --line:#2e353a; --soft:#1a2126;
+  --link:#5ea6ee; --brand:#2b87d9; --navy:#020726; --on-navy:#ffffff; --on-navy-muted:#b9c3d6;
+  --ok:#6fd69a; --ok-bg:#10291b; --fix:#f2c46b; --fix-bg:#33270c; --no:#ff9b8f; --no-bg:#3a1714; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:24px 72px}
+h1,h2,h3{font-family:var(--f-display);color:var(--ink);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(34px,6vw,56px);line-height:1.05}
+h2{font-size:clamp(26px,3.4vw,34px);line-height:1.15}
+h3{font-size:20px;line-height:1.3}
+p{margin:0}
+a{color:var(--link);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+:is(a,button,summary):focus-visible{outline:2px solid var(--link);outline-offset:2px;border-radius:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.mono{font-family:var(--f-mono);font-size:.84em}
+.prose{max-width:68ch;display:grid;gap:14px}
+.muted{color:var(--muted)}
+.eyebrow{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.04em;color:var(--muted)}
+
+.page{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px;align-items:start}
+@media (max-width:900px){.page{grid-template-columns:minmax(0,1fr);gap:24px}}
+
+/* índice */
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);display:grid;gap:12px;font-size:14px}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px;border-left:1px solid var(--line)}
+.toc a{display:block;color:var(--fg);text-decoration:none;padding:5px 0 5px 14px;margin-left:-1px;border-left:2px solid transparent}
+.toc a:hover{color:var(--ink);border-left-color:var(--brand)}
+.toc .doc{font-size:13px}
+@media (max-width:900px){
+  .toc{position:static}
+  .toc ol{display:flex;flex-wrap:wrap;gap:6px;border:0}
+  .toc a{border:1px solid var(--line);border-radius:4px;padding:5px 10px;margin:0;background:var(--surface)}
+}
+
+main{display:grid;gap:72px;min-width:0}
+section{display:grid;gap:24px;scroll-margin-top:24px;min-width:0}
+.sec-head{display:grid;gap:8px}
+
+/* abertura */
+.hero{background:var(--navy);color:var(--on-navy);border-radius:8px;padding:clamp(24px,5vw,48px);display:grid;gap:22px;border:1px solid var(--line)}
+.hero h1{color:var(--on-navy)}
+.hero .eyebrow{color:var(--on-navy-muted)}
+.hero .lede{font-size:18px;line-height:1.55;max-width:60ch;color:#e3e8f2}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.badge{font-family:var(--f-mono);font-size:12.5px;padding:4px 9px;border-radius:4px;border:1px solid rgba(255,255,255,.28);color:#ffffff}
+.visions{display:grid;gap:10px;padding-top:18px;border-top:1px solid rgba(255,255,255,.18)}
+.visions .lbl{font-size:13px;color:var(--on-navy-muted)}
+.vis-row{display:flex;flex-wrap:wrap;gap:14px}
+.vis{display:grid;gap:6px;justify-items:start;font-size:12.5px;color:#e3e8f2}
+.vis i{display:block;width:56px;height:36px;border-radius:4px;background:#2b87d9;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+.quote{border-left:3px solid var(--brand);padding:2px 0 2px 16px;display:grid;gap:4px;max-width:60ch}
+.quote p{font-family:var(--f-display);font-size:21px;line-height:1.35;color:var(--ink)}
+.quote span{font-size:13.5px;color:var(--muted)}
+
+/* grades */
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.grid3,.grid2{grid-template-columns:minmax(0,1fr)}}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:6px;align-content:start;min-width:0}
+.tile b{font-family:var(--f-display);font-size:17px;color:var(--ink);font-weight:600}
+.tile p{font-size:14.5px}
+.tile .help{font-size:14px;color:var(--muted)}
+.tile.on{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
+.tile .us{font-family:var(--f-mono);font-size:12px;color:var(--link)}
+.law{display:grid;gap:8px}
+.law .code{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+
+/* simulador */
+.cvd-bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid var(--line)}
+.cvd-bar .lbl{font-size:14px;color:var(--muted);margin-right:4px}
+.cvd-bar button,.btn-page{font:500 14px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:7px 12px;cursor:pointer;min-height:40px}
+.cvd-bar button[aria-pressed="true"]{border:2px solid var(--link);padding:6px 11px;font-weight:700}
+.cvd-bar button[aria-pressed="true"]::before{content:"✓ "}
+.btn-page:hover,.cvd-bar button:hover{border-color:var(--muted)}
+.svgdefs{position:absolute;width:0;height:0;overflow:hidden}
+.f-protan{filter:url(#cvd-protan)}
+.f-deutan{filter:url(#cvd-deutan)}
+.f-tritan{filter:url(#cvd-tritan)}
+.f-achro{filter:url(#cvd-achro)}
+[data-cvd="protan"] .demo{filter:url(#cvd-protan)}
+[data-cvd="deutan"] .demo{filter:url(#cvd-deutan)}
+[data-cvd="tritan"] .demo{filter:url(#cvd-tritan)}
+[data-cvd="achro"] .demo{filter:url(#cvd-achro)}
+
+/* exemplos */
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:grid;gap:14px;min-width:0}
+.ex-head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between}
+.ex-head h3{font-size:18px}
+.codes{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.ex > p{font-size:15px;max-width:68ch}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:620px){.pair{grid-template-columns:minmax(0,1fr)}}
+.side{display:grid;gap:8px;align-content:start;min-width:0}
+.verdict{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:3px 8px;border-radius:4px;justify-self:start}
+.verdict.no{color:var(--no);background:var(--no-bg)}
+.verdict.no::before{content:"✕"}
+.verdict.ok{color:var(--ok);background:var(--ok-bg)}
+.verdict.ok::before{content:"✓"}
+.src{font-size:13px;color:var(--muted)}
+.note{font-size:14px;color:var(--muted);max-width:68ch}
+
+/* telas de exemplo: cores fixas de propósito (são um design system claro, não o tema desta página) */
+.demo{background:#ffffff;color:#374151;border:1px solid #d6dce0;border-radius:8px;padding:16px;display:grid;gap:10px;font-family:"DM Sans",Arial,sans-serif;font-size:14px;line-height:1.5;min-width:0;overflow:hidden}
+.demo .h{color:#303030;font-weight:700;font-size:14px}
+.demo .cap{color:#636f79;font-size:12px;line-height:18px}
+.demo .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-block:6px;border-bottom:1px solid #e5ebf0}
+.demo .row:last-child{border-bottom:0}
+.dot{width:10px;height:10px;border-radius:999px;flex:none;display:inline-block}
+.tagx{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px;border-radius:4px;font-size:12px;font-weight:500;white-space:nowrap}
+.tagx svg{width:14px;height:14px}
+.t-ok{background:#e6f2ec;color:#1f7a4d}
+.t-no{background:#fbeceb;color:#c0372b}
+.t-warn{background:#fbf3e4;color:#8f5f0a}
+.t-info{background:#e8f0fb;color:#1a63c2}
+.ico{width:16px;height:16px;flex:none}
+.ico *{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bt{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border-radius:8px;font-size:14px;font-weight:500;border:0;color:#ffffff}
+.opt{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:8px;background:#ffffff;border:1px solid #d6dce0;color:#374151;font-size:14px}
+.field{display:grid;gap:4px}
+.field .lb{font-size:14px;font-weight:700;color:#303030}
+.field .in{height:44px;border-bottom:1px solid #d6dce0;display:flex;align-items:center;font-size:14px;color:#303030}
+.field .err{display:flex;align-items:center;gap:6px;font-size:12px;color:#c0372b}
+.chart svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:#374151}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+
+/* cinza e combinações */
+.sw{display:flex;gap:0;border-radius:4px;overflow:hidden;height:40px;border:1px solid #d6dce0}
+.sw i{flex:1}
+.combo-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.combo{display:grid;grid-template-columns:minmax(150px,1.2fr) repeat(4,minmax(96px,1fr));gap:8px 10px;padding:14px;min-width:600px;align-items:center;font-size:14px}
+.combo .hd{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.combo .nm{color:var(--ink);font-weight:500}
+.combo .sw{height:32px}
+
+/* tabelas */
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--muted)}
+tbody th{font-weight:700;color:var(--ink);min-width:170px}
+tr:last-child td,tr:last-child th{border-bottom:0}
+td .codes{display:block;margin-top:2px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.chip.fix{color:var(--fix);background:var(--fix-bg)}
+.chip.fix::before{content:"!"}
+.chip.ok{color:var(--ok);background:var(--ok-bg)}
+.chip.ok::before{content:"✓"}
+.chip.todo{color:var(--fg);background:var(--soft)}
+.chip.todo::before{content:"○"}
+ol.steps{margin:0;padding-left:22px;display:grid;gap:8px;max-width:68ch}
+
+/* dislexia */
+.read-demo{display:grid;gap:12px}
+.scramble{font-size:19px;line-height:1.6;color:#303030;min-height:4.8em}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.hard{font-family:Georgia,"Times New Roman",serif;text-align:justify;text-transform:uppercase;font-size:12px;line-height:1.2;letter-spacing:0;max-width:30ch}
+.easy{display:grid;gap:12px;font-size:16px;line-height:1.5;text-align:left;max-width:60ch}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+@media (max-width:620px){.cards{grid-template-columns:minmax(0,1fr)}}
+.pcard{border:1px solid #d6dce0;border-radius:8px;padding:16px;display:grid;gap:8px;align-content:start;background:#ffffff;color:#374151;font-size:14px;line-height:21px;overflow:hidden}
+.pcard .t{font-size:16px;line-height:24px;font-weight:700;color:#303030}
+.pcard .m{font-size:12px;line-height:18px;color:#636f79}
+.pcard p{margin:0}
+.spaced,.spaced *{line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}
+.spaced p{margin-bottom:2em!important}
+.state{font-size:13px;font-weight:700;padding:3px 8px;border-radius:4px;justify-self:start;display:inline-flex;gap:6px}
+.state.ok{color:var(--ok);background:var(--ok-bg)}
+.state.ok::before{content:"✓"}
+.state.no{color:var(--no);background:var(--no-bg)}
+.state.no::before{content:"✕"}
+
+.next{display:grid;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.next li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:14px 16px;border-bottom:1px solid var(--line);align-items:baseline}
+.next li:last-child{border-bottom:0}
+.next b{color:var(--ink);font-weight:700}
+.next span{font-size:14.5px;grid-column:1}
+.next .codes{grid-column:2;grid-row:1}
+@media (max-width:620px){.next li{grid-template-columns:minmax(0,1fr)}.next .codes{grid-column:1;grid-row:auto}}
+ul.refs{margin:0;padding-left:20px;display:grid;gap:8px;max-width:72ch}
+footer{color:var(--muted);font-size:14px;max-width:68ch;border-top:1px solid var(--line);padding-top:20px}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+
+</head>
+<body>
+<svg class="svgdefs" aria-hidden="true" focusable="false">
+  <!-- filtros de Machado, Oliveira e Fernandes (2009), os mesmos do Chrome DevTools -->
+  <filter id="cvd-protan" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.152286 1.052583 -0.204868 0 0  0.114503 0.786281 0.099216 0 0  -0.003882 -0.048116 1.051998 0 0  0 0 0 1 0"/></filter>
+  <filter id="cvd-deutan" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.367322 0.860646 -0.227968 0 0  0.280085 0.672501 0.047413 0 0  -0.011820 0.042940 0.968881 0 0  0 0 0 1 0"/></filter>
+  <filter id="cvd-tritan" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="1.255528 -0.076749 -0.178779 0 0  -0.078411 0.930809 0.147602 0 0  0.004733 0.691367 0.303900 0 0  0 0 0 1 0"/></filter>
+  <filter id="cvd-achro" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0"/></filter>
+</svg>
+
+<div class="page" lang="pt-BR">
+  <nav class="toc" aria-label="Neste guia">
+    <span class="eyebrow">Neste guia</span>
+    <ol>
+      <li><a href="#cultura">Acessibilidade como cultura</a></li>
+      <li><a href="#pessoas">Para quem desenhamos</a></li>
+      <li><a href="#normas">As regras que seguimos</a></li>
+      <li><a href="#daltonismo">Daltonismo</a></li>
+      <li><a href="#dislexia">Dislexia</a></li>
+      <li><a href="#proximos">Próximos capítulos</a></li>
+      <li><a href="#fontes">Fontes</a></li>
+    </ol>
+    <span class="doc muted">O texto completo de cada capítulo está no repositório do guia, na pasta <span class="mono">docs/</span>.</span>
+  </nav>
+
+  <main id="topo">
+    <header class="hero">
+      <span class="eyebrow">Para todos os produtos e design systems · versão 0.1 · 14 out 2026</span>
+      <h1>Guia de acessibilidade</h1>
+      <p class="lede">Toda tela, de qualquer produto, precisa funcionar para quem não distingue cores, lê com dificuldade, enxerga pouco, usa só o teclado ou ouve a tela. Este guia junta o que as normas pedem e como aplicar isso no design system e nas telas. Os exemplos usam cores de um design system real, com os contrastes medidos.</p>
+      <div class="badges">
+        <span class="badge">WCAG 2.2 AA</span>
+        <span class="badge">ABNT NBR 17225 · conformidade regular</span>
+        <span class="badge">Lei 13.146/2015, art. 63</span>
+      </div>
+      <div class="visions" aria-label="Um azul de marca em cinco visões">
+        <span class="lbl">Um azul de marca (#2b87d9) como cada pessoa vê</span>
+        <div class="vis-row">
+          <span class="vis"><i aria-hidden="true"></i>Típica</span>
+          <span class="vis"><i class="f-protan" aria-hidden="true"></i>Protanopia</span>
+          <span class="vis"><i class="f-deutan" aria-hidden="true"></i>Deuteranopia</span>
+          <span class="vis"><i class="f-tritan" aria-hidden="true"></i>Tritanopia</span>
+          <span class="vis"><i class="f-achro" aria-hidden="true"></i>Sem cores</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 1 -->
+    <section id="cultura" aria-labelledby="h-cultura">
+      <div class="sec-head">
+        <span class="eyebrow">Contexto</span>
+        <h2 id="h-cultura">Acessibilidade como cultura</h2>
+      </div>
+      <figure class="quote" style="margin:0">
+        <p>“O mundo já está na web e não podemos deixar ninguém de fora.”</p>
+        <span>Joseana Mar e Gabriela Castro, UX Collective Brasil</span>
+      </figure>
+      <div class="prose">
+        <p>Romeu Sassaki, referência da inclusão social no Brasil, separa a acessibilidade em seis dimensões. Uma tela acessível resolve a dimensão comunicacional. Mas ela só fica acessível de forma duradoura quando as outras também mudam: o jeito de trabalhar, as regras que adotamos e a atitude do time.</p>
+      </div>
+      <div class="grid3">
+        <div class="tile on"><b>Comunicacional</b><p>Sem barreiras na comunicação: escrita, fala, sinais e meio digital.</p><span class="us">Nossas telas</span></div>
+        <div class="tile on"><b>Metodológica</b><p>Sem barreiras nos métodos e técnicas de trabalho e estudo.</p><span class="us">Avaliar antes de entregar</span></div>
+        <div class="tile on"><b>Programática</b><p>Sem barreiras escondidas em normas, leis e políticas.</p><span class="us">WCAG, NBR 17225, LBI</span></div>
+        <div class="tile on"><b>Atitudinal</b><p>Sem preconceitos, estigmas e estereótipos.</p><span class="us">Cultura do time</span></div>
+        <div class="tile"><b>Instrumental</b><p>Sem barreiras nos instrumentos, utensílios e ferramentas.</p></div>
+        <div class="tile"><b>Arquitetônica</b><p>Sem barreiras físicas nos espaços.</p></div>
+      </div>
+      <div class="prose">
+        <p>Na prática, cultura aqui quer dizer três hábitos:</p>
+        <ol class="steps">
+          <li><b>Entra no desenho, não no fim.</b> Contraste, foco e textos são decididos junto com o layout, no Figma e no design system.</li>
+          <li><b>Ninguém aprova o próprio desenho.</b> Quem desenhou entrega como autoavaliado e outra pessoa confere.</li>
+          <li><b>Exceção tem dono.</b> Quando acessibilidade e identidade visual entram em conflito, quem decide é a pessoa responsável pelo produto, e a exceção fica registrada com aprovador e prazo.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="pessoas" aria-labelledby="h-pessoas">
+      <div class="sec-head">
+        <span class="eyebrow">Contexto</span>
+        <h2 id="h-pessoas">Para quem desenhamos</h2>
+      </div>
+      <p class="prose">A NBR 17225 fala em necessidades de acessibilidade situacionais, temporárias ou permanentes. Por isso a lista abaixo inclui quem está com o sol batendo na tela ou com uma mão ocupada: o que ajuda uma pessoa com deficiência ajuda todo mundo.</p>
+      <div class="grid3">
+        <div class="tile"><b>Daltonismo</b><p>Não distingue certas cores. Atinge cerca de 1 em cada 12 homens e 1 em cada 200 mulheres.</p><span class="help">Ajuda: cor sempre acompanhada de ícone, texto ou forma.</span></div>
+        <div class="tile"><b>Dislexia</b><p>Decodificar o texto custa mais. Algumas pessoas veem letras borradas ou que parecem se mexer.</p><span class="help">Ajuda: texto à esquerda, curto, com bom espaçamento.</span></div>
+        <div class="tile"><b>Baixa visão</b><p>Precisa de contraste e de ampliar a tela sem perder conteúdo.</p><span class="help">Ajuda: 4,5:1 no texto e layout que acompanha o zoom sem rolagem lateral.</span></div>
+        <div class="tile"><b>Só teclado</b><p>Navega com Tab, setas e Enter, sem mouse.</p><span class="help">Ajuda: foco visível em todo controle e ordem lógica.</span></div>
+        <div class="tile"><b>Leitor de tela</b><p>Ouve a tela em vez de vê-la.</p><span class="help">Ajuda: rótulos, nomes de botão e texto alternativo.</span></div>
+        <div class="tile"><b>Situação do momento</b><p>Sol na tela, celular numa mão, pressa, internet lenta.</p><span class="help">Ajuda: tudo o que está acima.</span></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="normas" aria-labelledby="h-normas">
+      <div class="sec-head">
+        <span class="eyebrow">Contexto</span>
+        <h2 id="h-normas">As regras que seguimos</h2>
+      </div>
+      <div class="grid3">
+        <div class="tile law"><span class="code">W3C · 2023</span><b>WCAG 2.2, nível AA</b><p>A diretriz internacional. Cada critério tem um nível: A, AA ou AAA. O AA é o nosso mínimo.</p></div>
+        <div class="tile law"><span class="code">ABNT · 11 mar 2025</span><b>NBR 17225</b><p>A norma brasileira, baseada na WCAG 2.2. Cumprir todos os requisitos é a conformidade regular, que equivale ao AA. As recomendações cobrem o AAA.</p></div>
+        <div class="tile law"><span class="code">Lei 13.146/2015</span><b>Lei Brasileira de Inclusão</b><p>O art. 63 obriga sites de empresas com sede ou representação no Brasil a serem acessíveis, seguindo as diretrizes internacionais.</p></div>
+      </div>
+      <p class="prose">Cada item da NBR aponta o critério da WCAG que atende. Neste guia, cada regra traz os dois códigos, por exemplo <span class="mono">WCAG 1.4.1 · NBR 5.11.1</span>.</p>
+    </section>
+
+    <!-- 4 -->
+    <section id="daltonismo" aria-labelledby="h-dalt">
+      <div class="sec-head">
+        <span class="eyebrow">WCAG 1.4.1 · NBR 5.11.1</span>
+        <h2 id="h-dalt">Daltonismo: a cor nunca trabalha sozinha</h2>
+      </div>
+      <div class="prose">
+        <p>Para quem tem daltonismo, uma informação passada só pela cor desaparece. Não é preciso uma adaptação para cada tipo. Se toda informação tem um sinal que não é cor e a tela continua legível em escala de cinza, ela funciona para a visão típica e para todos os tipos de daltonismo. A cor da marca continua a mesma; ela só deixa de trabalhar sozinha.</p>
+        <p>Os exemplos abaixo usam cores de um design system real. Use o seletor para ver cada um como uma pessoa daltônica veria.</p>
+      </div>
+
+      <div class="cvd-bar" role="group" aria-label="Ver os exemplos como">
+        <span class="lbl">Ver os exemplos como:</span>
+        <button type="button" id="cvd-none" data-cvd="none" aria-pressed="true">Visão típica</button>
+        <button type="button" id="cvd-protan-btn" data-cvd="protan" aria-pressed="false">Protanopia</button>
+        <button type="button" id="cvd-deutan-btn" data-cvd="deutan" aria-pressed="false">Deuteranopia</button>
+        <button type="button" id="cvd-tritan-btn" data-cvd="tritan" aria-pressed="false">Tritanopia</button>
+        <button type="button" id="cvd-achro-btn" data-cvd="achro" aria-pressed="false">Sem cores</button>
+      </div>
+
+      <div class="grid2" id="cvd-area">
+        <!-- status -->
+        <article class="ex">
+          <div class="ex-head"><h3>Status com sinal duplo</h3><span class="codes">WCAG 1.4.1 · NBR 5.11.1</span></div>
+          <p>A cor reforça, mas quem explica é a palavra e o ícone.</p>
+          <div class="pair">
+            <div class="side"><span class="verdict no">Assim não</span>
+              <div class="demo">
+                <span class="h">Propostas</span>
+                <div class="row">Proposta 0148<span class="dot" style="background:#1f7a4d" title="Aprovada"></span></div>
+                <div class="row">Proposta 0151<span class="dot" style="background:#c0372b" title="Recusada"></span></div>
+                <div class="row">Proposta 0153<span class="dot" style="background:#c6872b" title="Em análise"></span></div>
+              </div>
+            </div>
+            <div class="side"><span class="verdict ok">Assim sim</span>
+              <div class="demo">
+                <span class="h">Propostas</span>
+                <div class="row">Proposta 0148<span class="tagx t-ok"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>Aprovada</span></div>
+                <div class="row">Proposta 0151<span class="tagx t-no"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Recusada</span></div>
+                <div class="row">Proposta 0153<span class="tagx t-warn"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Em análise</span></div>
+              </div>
+            </div>
+          </div>
+          <span class="src">Fontes: AudioEye (práticas 1, 2 e 4) e UX Collective Brasil.</span>
+        </article>
+
+        <!-- instrução -->
+        <article class="ex">
+          <div class="ex-head"><h3>Instrução sem depender da cor</h3><span class="codes">WCAG 1.3.3 · NBR 5.10.1</span></div>
+          <p>Nada de “toque no botão verde”. Chame o controle pelo nome que está escrito nele.</p>
+          <div class="pair">
+            <div class="side"><span class="verdict no">Assim não</span>
+              <div class="demo">
+                <span>Toque no botão verde para continuar ou no vermelho para cancelar.</span>
+                <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="bt" style="background:#1f7a4d;width:64px" role="img" aria-label="Botão verde, sem texto"></span><span class="bt" style="background:#c0372b;width:64px" role="img" aria-label="Botão vermelho, sem texto"></span></div>
+              </div>
+            </div>
+            <div class="side"><span class="verdict ok">Assim sim</span>
+              <div class="demo">
+                <span>Toque em Continuar para ir para a próxima etapa.</span>
+                <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="bt" style="background:#166cba">Continuar</span><span class="bt" style="background:#ffffff;color:#166cba;border:1px solid #166cba">Cancelar</span></div>
+              </div>
+            </div>
+          </div>
+          <span class="src">Fonte: UX Collective Brasil.</span>
+        </article>
+
+        <!-- link -->
+        <article class="ex">
+          <div class="ex-head"><h3>Link parece link</h3><span class="codes">WCAG 1.4.1 · NBR 5.11.1</span></div>
+          <p>Aqui, o azul de link (#166cba) tem só 1,91:1 contra o texto (#374151). Abaixo de 3:1, a cor sozinha não separa o link do texto em volta. Link dentro de texto é sempre sublinhado.</p>
+          <div class="pair">
+            <div class="side"><span class="verdict no">Assim não</span>
+              <div class="demo"><span>Usamos cookies para melhorar sua experiência. Veja a <span style="color:#166cba">Política de privacidade</span>.</span></div>
+            </div>
+            <div class="side"><span class="verdict ok">Assim sim</span>
+              <div class="demo"><span>Usamos cookies para melhorar sua experiência. Veja a <span style="color:#166cba;text-decoration:underline;text-underline-offset:3px">Política de privacidade</span>.</span></div>
+            </div>
+          </div>
+          <span class="src">Fontes: UX Collective Brasil; AudioEye (prática 5, linhas grossas e sublinhado).</span>
+        </article>
+
+        <!-- seleção -->
+        <article class="ex">
+          <div class="ex-head"><h3>Opção escolhida</h3><span class="codes">WCAG 1.4.1 e 1.4.11 · NBR 5.11.1 e 5.11.4</span></div>
+          <p>Escolha marcada só pela cor da borda some para quem não vê o azul. Borda de 2 px, check e texto em negrito resolvem.</p>
+          <div class="pair">
+            <div class="side"><span class="verdict no">Assim não</span>
+              <div class="demo"><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="opt" style="border-color:#2b87d9">Pessoa Física</span><span class="opt">Pessoa Jurídica</span></div></div>
+            </div>
+            <div class="side"><span class="verdict ok">Assim sim</span>
+              <div class="demo"><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="opt" style="border:2px solid #2b87d9;padding:0 13px;font-weight:700;color:#303030"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="color:#166cba"><path d="M5 12l5 5 9-10"/></svg>Pessoa Física</span><span class="opt">Pessoa Jurídica</span></div></div>
+            </div>
+          </div>
+          <span class="src">Vale para grupos de opções, filtros e cards selecionáveis.</span>
+        </article>
+
+        <!-- gráfico -->
+        <article class="ex">
+          <div class="ex-head"><h3>Gráfico com textura e rótulo</h3><span class="codes">WCAG 1.4.1 e 1.4.11 · NBR 5.11.5</span></div>
+          <p>Cada série ganha uma textura e o nome escrito no próprio gráfico, sem depender da legenda.</p>
+          <div class="pair">
+            <div class="side"><span class="verdict no">Assim não</span>
+              <div class="demo chart">
+                <span class="h">Propostas no mês</span>
+                <svg viewBox="0 0 300 40" role="img" aria-label="Barra empilhada: 42 aprovadas, 27 em análise, 11 recusadas, só por cor">
+                  <rect x="0" y="4" width="157.5" height="32" fill="#1f7a4d"/>
+                  <rect x="157.5" y="4" width="101.25" height="32" fill="#c6872b"/>
+                  <rect x="258.75" y="4" width="41.25" height="32" fill="#c0372b"/>
+                </svg>
+                <div class="legend"><span><i class="dot" style="background:#1f7a4d"></i>Aprovadas</span><span><i class="dot" style="background:#c6872b"></i>Em análise</span><span><i class="dot" style="background:#c0372b"></i>Recusadas</span></div>
+              </div>
+            </div>
+            <div class="side"><span class="verdict ok">Assim sim</span>
+              <div class="demo chart">
+                <span class="h">Propostas no mês</span>
+                <svg viewBox="0 0 300 64" role="img" aria-label="Barra empilhada com texturas e rótulos: 42 aprovadas, 27 em análise, 11 recusadas">
+                  <defs>
+                    <pattern id="pt-dots" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#c6872b"/><circle cx="4" cy="4" r="1.7" fill="#ffffff" fill-opacity=".75"/></pattern>
+                    <pattern id="pt-lines" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#c0372b"/><rect width="2.5" height="7" fill="#ffffff" fill-opacity=".6"/></pattern>
+                  </defs>
+                  <text x="0" y="13" font-size="11" font-family="DM Sans, Arial, sans-serif" fill="#303030">Aprovadas 42</text>
+                  <text x="160" y="13" font-size="11" font-family="DM Sans, Arial, sans-serif" fill="#303030">Em análise 27</text>
+                  <text x="300" y="62" font-size="11" font-family="DM Sans, Arial, sans-serif" fill="#303030" text-anchor="end">Recusadas 11</text>
+                  <rect x="0" y="18" width="156.5" height="30" fill="#1f7a4d"/>
+                  <rect x="158.5" y="18" width="99.25" height="30" fill="url(#pt-dots)"/>
+                  <rect x="259.75" y="18" width="40.25" height="30" fill="url(#pt-lines)"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <span class="src">Fonte: AudioEye (prática 3). Dados de exemplo.</span>
+        </article>
+
+        <!-- erro -->
+        <article class="ex">
+          <div class="ex-head"><h3>Erro de campo</h3><span class="codes">WCAG 1.4.1 · NBR 5.9.9</span></div>
+          <p>Borda vermelha sozinha não diz o que houve. Ícone e mensagem dizem o erro e como resolver.</p>
+          <div class="pair">
+            <div class="side"><span class="verdict no">Assim não</span>
+              <div class="demo"><div class="field"><span class="lb">CPF</span><span class="in" style="border-bottom:2px solid #c0372b">123.456.789</span></div></div>
+            </div>
+            <div class="side"><span class="verdict ok">Assim sim</span>
+              <div class="demo"><div class="field"><span class="lb">CPF</span><span class="in" style="border-bottom:2px solid #c0372b">123.456.789</span><span class="err"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>Digite os 11 números do CPF.</span></div></div>
+            </div>
+          </div>
+          <span class="src">Fonte: AudioEye (prática 2).</span>
+        </article>
+      </div>
+
+      <article class="ex">
+        <div class="ex-head"><h3>Claridade, não só matiz</h3><span class="codes">AudioEye, prática 6</span></div>
+        <p>Neste exemplo, o verde e o vermelho de status têm quase a mesma claridade: 1,03:1 entre si. Em escala de cinza viram a mesma cor. Quando dois estados só podem mudar de cor, a diferença de claridade entre eles precisa ser de 3:1 ou mais. Abaixo disso, entra a forma, o ícone ou a palavra.</p>
+        <div class="pair">
+          <div class="side"><span class="eyebrow">Visão típica</span><div class="sw" aria-hidden="true"><i style="background:#1f7a4d"></i><i style="background:#c0372b"></i></div><span class="src">Positive #1f7a4d · Negative #c0372b</span></div>
+          <div class="side"><span class="eyebrow">Em escala de cinza</span><div class="sw f-achro" aria-hidden="true"><i style="background:#1f7a4d"></i><i style="background:#c0372b"></i></div><span class="src">1,03:1 entre os dois</span></div>
+        </div>
+      </article>
+
+      <div class="sec-head" style="gap:10px">
+        <h3>Combinações para evitar</h3>
+        <p class="prose">Estes pares se confundem para muita gente. Se precisar usar algum, acrescente rótulo ou ícone. Prefira uma paleta enxuta e varie a claridade, e para separar duas séries use azul com laranja, um claro e um escuro.</p>
+      </div>
+      <div class="combo-wrap">
+        <div class="combo" role="table" aria-label="Pares de cor em quatro visões">
+          <div role="row" style="display:contents"><span class="hd" role="columnheader">Par</span><span class="hd" role="columnheader">Típica</span><span class="hd" role="columnheader">Protanopia</span><span class="hd" role="columnheader">Deuteranopia</span><span class="hd" role="columnheader">Tritanopia</span></div>
+        </div>
+      </div>
+      <span class="src">Pares listados pela AudioEye (prática 7); simulação pelo modelo de Machado, Oliveira e Fernandes (2009), o mesmo do Chrome.</span>
+
+      <div class="sec-head" style="gap:10px">
+        <h3>Como testar antes de entregar</h3>
+      </div>
+      <ol class="steps">
+        <li>Veja a tela em escala de cinza. Se uma informação some, ela depende só da cor.</li>
+        <li>Rode um simulador. No Figma, o plugin Stark. No Chrome, DevTools › Rendering › Emulate vision deficiencies.</li>
+        <li>Trate a simulação como aproximação e, sempre que der, valide com pessoas daltônicas.</li>
+      </ol>
+
+      <div class="sec-head" style="gap:10px">
+        <h3>Padrões de componente</h3>
+        <p class="prose">Como a regra vira desenho nos componentes do design system.</p>
+      </div>
+      <div class="tbl">
+        <table>
+          <thead><tr><th scope="col">Situação</th><th scope="col">Como fazer</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Opção escolhida</th><td>Borda de 2 px, check e texto em negrito<span class="codes">grupos de opções, filtros e cards selecionáveis</span></td></tr>
+            <tr><th scope="row">Link dentro de texto</th><td>Sublinhado sempre</td></tr>
+            <tr><th scope="row">Posição no carrossel</th><td>Ponto atual mais largo e “2 de 4” escrito</td></tr>
+            <tr><th scope="row">Erro de campo</th><td>Ícone, texto e cor</td></tr>
+            <tr><th scope="row">Status de um item</th><td>Texto ao lado do ponto colorido</td></tr>
+            <tr><th scope="row">Mensagens (toasts)</th><td>Rótulo escrito e ícone</td></tr>
+            <tr><th scope="row">Critérios de senha</th><td>Ícone de check ou de x além da cor</td></tr>
+            <tr><th scope="row">Gráficos</th><td>Rótulo direto, textura em cada série e 3:1 entre séries vizinhas</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section id="dislexia" aria-labelledby="h-dis">
+      <div class="sec-head">
+        <span class="eyebrow">NBR 5.12 · WCAG 1.4.8 e 1.4.12</span>
+        <h2 id="h-dis">Dislexia: texto que se lê sem esforço</h2>
+      </div>
+      <div class="prose">
+        <p>A dislexia afeta a parte da leitura que transforma letras em palavras. Ler passa a pedir mais esforço, e algumas pessoas percebem o texto borrado, com letras que parecem trocar de lugar ou com “rios” de espaço branco cortando o parágrafo. Cada pessoa sente de um jeito, mas as mesmas escolhas de texto ajudam quase todas, e deixam a leitura mais fácil para quem não tem dislexia.</p>
+      </div>
+
+      <article class="ex read-demo" aria-labelledby="h-sim">
+        <div class="ex-head"><h3 id="h-sim">Uma aproximação de como pode ser</h3><span class="codes">simulação</span></div>
+        <p class="note">As letras do meio das palavras trocam de lugar. É só uma aproximação, que ajuda a entender o esforço. Ela não representa a experiência de todas as pessoas com dislexia.</p>
+        <div class="demo">
+          <p class="sr-only">Texto da simulação: Para seguir com o pedido, envie um comprovante de endereço atualizado e um comprovante de renda dos últimos três meses.</p>
+          <p class="scramble" id="scramble" aria-hidden="true">Para seguir com o pedido, envie um comprovante de endereço atualizado e um comprovante de renda dos últimos três meses.</p>
+        </div>
+        <div class="controls">
+          <button type="button" class="btn-page" id="scramble-btn" aria-pressed="false">Iniciar simulação</button>
+          <span class="src" id="scramble-hint">A animação só começa quando você pede e para quando você quiser.</span>
+        </div>
+      </article>
+
+      <article class="ex">
+        <div class="ex-head"><h3>O mesmo texto, duas escolhas</h3><span class="codes">NBR 5.12.1, 5.12.5 e 5.12.6</span></div>
+        <div class="pair">
+          <div class="side"><span class="verdict no">Assim não</span>
+            <div class="demo"><p class="hard">Para seguir com o pedido, envie um comprovante de endereço atualizado e um comprovante de renda dos últimos três meses. Depois do envio, a análise leva até dois dias úteis e você acompanha cada etapa pela tela Pedidos.</p></div>
+            <span class="src">Justificado, caixa alta, serifa, 12 px, entrelinha 1,2.</span>
+          </div>
+          <div class="side"><span class="verdict ok">Assim sim</span>
+            <div class="demo easy"><p>Para seguir com o pedido, envie dois documentos:</p><p>um comprovante de endereço atualizado e um comprovante de renda dos últimos três meses.</p><p>A análise leva até dois dias úteis. Acompanhe cada etapa em Pedidos.</p></div>
+            <span class="src">À esquerda, uma ideia por parágrafo, sem serifa, 16 px, entrelinha 1,5.</span>
+          </div>
+        </div>
+        <span class="src">Texto de exemplo.</span>
+      </article>
+
+      <div class="tbl">
+        <table>
+          <thead><tr><th scope="col">Prática</th><th scope="col">Por quê</th><th scope="col">Regra</th><th scope="col">No design system</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Alinhar à esquerda, nunca justificar</th><td>O justificado abre espaços irregulares entre palavras, que se alinham em “rios” e puxam o olho para baixo.</td><td><span class="mono">NBR 5.12.5</span> recomendação<span class="codes">WCAG 1.4.8</span></td><td><span class="chip todo">Conferir nos textos longos</span></td></tr>
+            <tr><th scope="row">Uma ideia por parágrafo</th><td>Pessoas com dislexia precisam de mais pausas entre os assuntos.</td><td>Boa prática</td><td><span class="chip todo">Termos, notícias e ajuda</span></td></tr>
+            <tr><th scope="row">Poucas palavras, as importantes primeiro</th><td>Menos texto para decodificar; a palavra-chave aparece logo.</td><td><span class="mono">NBR 5.12.12</span> recomendação<span class="codes">e ABNT NBR ISO 24495-1, linguagem simples</span></td><td><span class="chip todo">Revisar com o conteúdo</span></td></tr>
+            <tr><th scope="row">Fonte sem serifa</th><td>Sem os ganchos nas pontas, as letras ficam mais fáceis de separar.</td><td>Boa prática</td><td><span class="chip todo">Conferir a família</span></td></tr>
+            <tr><th scope="row">Caixa alta só em rótulo curto</th><td>Em maiúsculas todas as letras têm a mesma altura e a palavra perde o desenho.</td><td>Boa prática</td><td><span class="chip todo">Conferir títulos e botões</span></td></tr>
+            <tr><th scope="row">Texto corrido em 16 px</th><td>16 px equivalem a 12 pt, dentro da faixa de 10 a 15 pt indicada no artigo. Corpo pequeno fica ilegível para quem tem dislexia ou baixa visão.</td><td>Boa prática<span class="codes">ampliar até 200%: NBR 5.12.7</span></td><td><span class="chip todo">Conferir o corpo de texto</span></td></tr>
+            <tr><th scope="row">Entrelinha de 1,5</th><td>Linhas apertadas se misturam.</td><td><span class="mono">NBR 5.12.1</span> requisito<span class="codes">WCAG 1.4.12</span></td><td><span class="chip todo">Conferir os estilos de texto</span></td></tr>
+            <tr><th scope="row">Até 80 caracteres por linha</th><td>Linha longa faz o olho se perder na volta.</td><td><span class="mono">NBR 5.12.6</span> requisito<span class="codes">WCAG 1.4.8</span></td><td><span class="chip todo">Largura máxima nos textos longos</span></td></tr>
+            <tr><th scope="row">Espaçamento ajustável sem quebrar</th><td>Muita gente aumenta o espaço entre letras e linhas para conseguir ler.</td><td><span class="mono">NBR 5.12.1 a 5.12.4</span> requisitos<span class="codes">WCAG 1.4.12</span></td><td><span class="chip todo">Teste abaixo</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <article class="ex">
+        <div class="ex-head"><h3>Teste: o texto aguenta mais espaço?</h3><span class="codes">WCAG 1.4.12 · NBR 5.12.1 a 5.12.4</span></div>
+        <p>O botão aplica o espaçamento que a norma usa como referência: entrelinha de 1,5, parágrafos com 2 vezes a fonte, letras com 0,12 e palavras com 0,16. O card de altura fixa corta o texto; o card que cresce com o conteúdo não perde nada. No Figma, isso é a altura em Hug.</p>
+        <div class="controls"><button type="button" class="btn-page" id="spacing-btn" aria-pressed="false">Aplicar espaçamento da norma</button></div>
+        <div class="cards">
+          <div class="side">
+            <span class="eyebrow">Altura fixa</span>
+            <div class="pcard" id="card-fixed">
+              <span class="t">Proposta 0153</span>
+              <p>Pedido de crédito. Envie o comprovante de endereço atualizado até 20 de outubro.</p>
+              <span class="m">Atualizada há 2 horas</span>
+            </div>
+            <span class="state ok" id="fixed-state" aria-live="polite">Todo o texto aparece</span>
+          </div>
+          <div class="side">
+            <span class="eyebrow">Altura que cresce (Hug)</span>
+            <div class="pcard" id="card-hug">
+              <span class="t">Proposta 0153</span>
+              <p>Pedido de crédito. Envie o comprovante de endereço atualizado até 20 de outubro.</p>
+              <span class="m">Atualizada há 2 horas</span>
+            </div>
+            <span class="state ok">Todo o texto aparece</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- 6 -->
+    <section id="proximos" aria-labelledby="h-prox">
+      <div class="sec-head">
+        <span class="eyebrow">Em construção</span>
+        <h2 id="h-prox">Próximos capítulos</h2>
+      </div>
+      <p class="prose">O texto de cada um já está no repositório do guia, na pasta <span class="mono">docs/</span>. Eles entram nesta página com exemplos ao vivo, como os de cima.</p>
+      <ol class="next" style="list-style:none;margin:0;padding:0">
+        <li><b>Contraste e cor da marca</b><span>4,5:1 no texto, 3:1 em ícone, borda e foco. Onde a cor da marca passa e quando usar um tom mais escuro da própria paleta.</span><span class="codes">NBR 5.11.2 a 5.11.6</span></li>
+        <li><b>Foco e teclado</b><span>Anel de 2 px por fora do controle, ordem lógica e atalhos de cada componente.</span><span class="codes">NBR 5.1</span></li>
+        <li><b>Alvos de toque</b><span>24 px no mínimo e 44 px na Regra da Casa, com 8 px entre alvos.</span><span class="codes">NBR 5.8.6 e 5.8.7</span></li>
+        <li><b>Formulários</b><span>Rótulo visível, erro que explica e somente leitura quando o dado precisa ser copiado.</span><span class="codes">NBR 5.9</span></li>
+        <li><b>Imagens e mídia</b><span>Texto alternativo, vídeo com controles e legenda.</span><span class="codes">NBR 5.2 e 5.14</span></li>
+        <li><b>Movimento e tempo</b><span>Versão parada para quem reduz movimento; nada some antes de ser lido.</span><span class="codes">NBR 5.15 e 5.16</span></li>
+        <li><b>Responsivo</b><span>As quatro larguras do time (1728, 1366, 768 e 390), com o Mobile fluido.</span><span class="codes">NBR 5.10.4</span></li>
+      </ol>
+    </section>
+
+    <!-- 7 -->
+    <section id="fontes" aria-labelledby="h-fontes">
+      <div class="sec-head">
+        <span class="eyebrow">Referências</span>
+        <h2 id="h-fontes">Fontes</h2>
+      </div>
+      <ul class="refs">
+        <li><a href="https://brasil.uxdesign.cc/acessibilidade-digital-como-cultura-daltonismo-e-dislexia-16939161d517">Acessibilidade digital como cultura: daltonismo e dislexia</a>, Joseana Mar e Gabriela Castro, UX Collective Brasil, 2020</li>
+        <li><a href="https://www.audioeye.com/post/8-ways-to-design-a-color-blind-friendly-website/">How to design for color blindness</a>, Sojin Rank, AudioEye, 2026</li>
+        <li><a href="https://www2.camara.leg.br/a-camara/estruturaadm/gestao-na-camara-dos-deputados/responsabilidade-social-e-ambiental/acessibilidade/pdfs/ABNTNBR17225AcessibilidadeDigitalparaWeb.pdf">ABNT NBR 17225:2025, Acessibilidade em conteúdo e aplicações web, Requisitos</a> (PDF no site da Câmara dos Deputados)</li>
+        <li><a href="https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html">WCAG 2.2: entendendo o critério 1.4.1, Uso de cor</a> (W3C)</li>
+        <li><a href="http://guia-wcag.com/">Guia WCAG</a>, critérios em português com o item correspondente da NBR 17225</li>
+        <li><a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13146.htm">Lei Brasileira de Inclusão, Lei 13.146/2015</a></li>
+        <li><a href="https://www.nei.nih.gov/learn-about-eye-health/eye-conditions-and-diseases/color-blindness/types-color-vision-deficiency">Tipos de daltonismo</a> (National Eye Institute)</li>
+              </ul>
+      <footer>Esta página segue o que pede: texto à esquerda, entrelinha de 1,5, linhas de até 70 caracteres, links sublinhados, foco visível e animação só quando você pede.</footer>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+  document.documentElement.lang = 'pt-BR';
+
+  // pares de cor para evitar (AudioEye, prática 7)
+  var pairs = [
+    ['Verde e vermelho', '#2e9e44', '#d0312d'],
+    ['Verde e marrom', '#2e9e44', '#8b5a2b'],
+    ['Verde e cinza', '#2e9e44', '#8a8f93'],
+    ['Verde e azul', '#2e9e44', '#2b6fd9'],
+    ['Verde e preto', '#2e9e44', '#222222'],
+    ['Verde-claro e amarelo', '#8fd16a', '#f2d13b'],
+    ['Azul e roxo', '#2b6fd9', '#7b3fbf'],
+    ['Azul e cinza', '#2b6fd9', '#8a8f93']
+  ];
+  var views = ['', 'f-protan', 'f-deutan', 'f-tritan'];
+  var combo = document.querySelector('.combo');
+  pairs.forEach(function(p){
+    var row = document.createElement('div');
+    row.setAttribute('role', 'row');
+    row.style.display = 'contents';
+    var nm = document.createElement('span');
+    nm.className = 'nm'; nm.setAttribute('role', 'rowheader'); nm.textContent = p[0];
+    row.appendChild(nm);
+    views.forEach(function(v){
+      var cell = document.createElement('span');
+      cell.setAttribute('role', 'cell');
+      var sw = document.createElement('span');
+      sw.className = 'sw' + (v ? ' ' + v : '');
+      sw.setAttribute('aria-hidden', 'true');
+      sw.innerHTML = '<i style="background:' + p[1] + '"></i><i style="background:' + p[2] + '"></i>';
+      cell.appendChild(sw);
+      row.appendChild(cell);
+    });
+    combo.appendChild(row);
+  });
+
+  // simulador de daltonismo
+  var section = document.getElementById('daltonismo');
+  var buttons = section.querySelectorAll('.cvd-bar button');
+  buttons.forEach(function(b){
+    b.addEventListener('click', function(){
+      var v = b.getAttribute('data-cvd');
+      if (v === 'none') section.removeAttribute('data-cvd'); else section.setAttribute('data-cvd', v);
+      buttons.forEach(function(o){ o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+    });
+  });
+
+  // simulação de leitura
+  var el = document.getElementById('scramble');
+  var btn = document.getElementById('scramble-btn');
+  var hint = document.getElementById('scramble-hint');
+  var original = el.textContent;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var timer = null;
+  function shuffle(word){
+    var m = word.match(/^([^\p{L}]*)(\p{L}+)([^\p{L}]*)$/u);
+    if (!m || m[2].length < 4 || Math.random() < 0.45) return word;
+    var core = m[2], mid = core.slice(1, -1).split('');
+    for (var i = mid.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = mid[i]; mid[i] = mid[j]; mid[j] = t; }
+    return m[1] + core[0] + mid.join('') + core[core.length - 1] + m[3];
+  }
+  function scrambleOnce(){ el.textContent = original.split(' ').map(shuffle).join(' '); }
+  if (reduce) {
+    btn.textContent = 'Embaralhar as letras';
+    hint.textContent = 'Seu sistema pede menos movimento: cada clique troca as letras uma vez.';
+    btn.removeAttribute('aria-pressed');
+    btn.addEventListener('click', scrambleOnce);
+  } else {
+    btn.addEventListener('click', function(){
+      if (timer) {
+        clearInterval(timer); timer = null; el.textContent = original;
+        btn.textContent = 'Iniciar simulação'; btn.setAttribute('aria-pressed', 'false');
+      } else {
+        scrambleOnce(); timer = setInterval(scrambleOnce, 650);
+        btn.textContent = 'Parar simulação'; btn.setAttribute('aria-pressed', 'true');
+      }
+    });
+  }
+
+  // teste de espaçamento
+  var fixed = document.getElementById('card-fixed');
+  var hug = document.getElementById('card-hug');
+  var state = document.getElementById('fixed-state');
+  var sbtn = document.getElementById('spacing-btn');
+  var spaced = false;
+  function lockHeight(){
+    if (spaced) return;
+    fixed.style.height = 'auto';
+    fixed.style.height = fixed.offsetHeight + 'px';
+  }
+  function report(){
+    var cut = fixed.scrollHeight > fixed.clientHeight + 1;
+    state.className = 'state ' + (cut ? 'no' : 'ok');
+    state.textContent = cut ? 'Texto cortado' : 'Todo o texto aparece';
+  }
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function(){ lockHeight(); report(); });
+  window.addEventListener('resize', function(){ lockHeight(); report(); });
+  sbtn.addEventListener('click', function(){
+    spaced = !spaced;
+    fixed.classList.toggle('spaced', spaced);
+    hug.classList.toggle('spaced', spaced);
+    sbtn.setAttribute('aria-pressed', spaced ? 'true' : 'false');
+    sbtn.textContent = spaced ? 'Voltar ao espaçamento normal' : 'Aplicar espaçamento da norma';
+    report();
+  });
+})();
+</script>
+
+</body>
+</html>
